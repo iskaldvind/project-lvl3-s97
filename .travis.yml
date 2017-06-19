@@ -7,9 +7,13 @@ language: node_js
 node_js:
   - stable
 
+before_script:
+  - cc-test-reporter before-build
+
 script:
   - make lint
   - make test
+  - cc-test-reporter after-build --exit-code $?
 
 after_script:
   - codeclimate-test-reporter < ./coverage/lcov.info
