@@ -1,13 +1,16 @@
-import url from 'url';
-import path from 'path';
+import fs from 'mz/fs';
+import axios from './lib/axios';
+import resolvePath from './lib/helpers';
 
-const makeNameFromAddress = (address) => {
-  const { host, pathname } = url.parse(address);
-  const trimmedAddress = pathname === '/' ? host : `${host}${pathname}`;
-  const name = trimmedAddress.replace(/[^A-Za-z]+/g, '-');
-  return `${name}.html`;
+/*
+export default (address, dir) => axios.get(address)
+  .then((response) => {
+    fs.writeFile(resolvePath(address, dir), response.data).catch(error => error);
+  });
+*/
+
+export default (address, dir) => {
+  return axios.get(address)
+    .then(response => fs.writeFile(resolvePath(address, dir), response.data))
+    .catch(err => err);
 };
-
-const downloadPage = (address, dir) => `${makeNameFromAddress(address)} - ${path.resolve(dir)}`;
-
-export default downloadPage;

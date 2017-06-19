@@ -1,14 +1,14 @@
 import program from 'commander';
-import downloadPage from './page-loader';
+import download from './page-loader';
 
-const main = () => {
+export default () => {
   program
     .version('0.0.x')
     .arguments('<url>')
     .description('Downloads page into local directory (current by default)')
     .option('-o, --output <path>', 'output directory path', './')
     .action((url, options) => {
-      console.log(downloadPage(url, options.output));
+      download(url, options.output).catch(error => console.log(error));
     })
     .parse(process.argv);
 
@@ -16,5 +16,3 @@ const main = () => {
     program.help();
   }
 };
-
-export default main;
