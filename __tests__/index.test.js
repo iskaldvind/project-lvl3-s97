@@ -2,7 +2,7 @@ import nock from 'nock';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
-import download from '../src';
+import download from '../src/page-loader';
 
 describe('Test "download"', () => {
   const address = 'http://example.com';
@@ -15,6 +15,7 @@ describe('Test "download"', () => {
     download(address, dir)
       .then(() => fs.readFile(path.resolve(dir, 'example-com.html'), 'utf8'))
       .then(data => expect(data).toBe(body))
-      .then(done);
+      .catch(done.fail)
+      .then(done());
   });
 });
