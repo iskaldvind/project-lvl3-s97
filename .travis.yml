@@ -11,6 +11,9 @@ script:
   - make lint
   - make test
 
+after_script:
+  - codeclimate-test-reporter < ./coverage/lcov.info
+
 addons:
   code_climate:
     repo_token: 2e401bc26dc9709d31542e7431103d702a3901566f5a3226460cb3acdc8dffce
