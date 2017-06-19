@@ -1,5 +1,18 @@
-/node_modules/
-/__tests__/
+#tests
+__tests__
+coverage
+
+#build tools
+.travis.yml
+.codeclimate.yml
+
+#svc
+.gitignore
+
+#linters
+.babelrc
+.eslintrc.yml
+
+#clutter
 *.log
-.DS_Store
 .idea
