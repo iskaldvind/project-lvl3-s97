@@ -1,0 +1,14 @@
+engines:
+  eslint:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - javascript
+exclude_paths:
+- "node_modules/"
+- "__tests__"
+ratings:
+   paths:
+   - "src/**"
