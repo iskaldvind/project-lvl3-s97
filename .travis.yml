@@ -7,5 +7,5 @@ script:
   - make test
 
 addons:
-  conde_climate:
+  code_climate:
     repo_token: 2e401bc26dc9709d31542e7431103d702a3901566f5a3226460cb3acdc8dffce
