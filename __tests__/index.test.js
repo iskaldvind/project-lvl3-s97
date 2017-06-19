@@ -14,9 +14,7 @@ describe('Test "download"', () => {
   it('Downloads page', (done) => {
     download(address, dir)
       .then(() => fs.readFile(path.resolve(dir, 'example-com.html'), 'utf8'))
-      .then(data => console.log(data))
+      .then(data => expect(data).toBe(body))
       .then(done);
   });
 });
-
-// expect(data).toBe(body)
