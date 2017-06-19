@@ -1,23 +1,16 @@
-env:
-  global:
-    - CC_TEST_REPORTER_ID=2e401bc26dc9709d31542e7431103d702a3901566f5a3226460cb3acdc8dffce
-    - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
+addons:
+  code_climate:
+    repo_token: 2e401bc26dc9709d31542e7431103d702a3901566f5a3226460cb3acdc8dffce
 
 language: node_js
 node_js:
   - stable
 
-before_script:
-  - cc-test-reporter before-build
-
 script:
   - make lint
   - make test
-  - cc-test-reporter after-build --exit-code $?
 
 after_script:
   - codeclimate-test-reporter < ./coverage/lcov.info
 
-addons:
-  code_climate:
-    repo_token: 2e401bc26dc9709d31542e7431103d702a3901566f5a3226460cb3acdc8dffce
+
