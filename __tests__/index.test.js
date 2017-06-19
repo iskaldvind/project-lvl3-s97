@@ -15,7 +15,7 @@ describe('Test "download"', () => {
     download(address, dir)
       .then(() => fs.readFile(path.resolve(dir, 'example-com.html'), 'utf8'))
       .then(data => expect(data).toBe(body))
-      .catch(done.fail)
-      .then(done());
+      .then(done())
+      .catch(done.fail);
   });
 });
