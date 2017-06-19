@@ -1,6 +1,6 @@
 {
   "name": "page-loader-ultimate",
-  "version": "0.0.14",
+  "version": "0.0.16",
   "description": "project-lvl3-s97",
   "bin": {
     "page-loader": "dist/bin/page-loader.js"
@@ -9,8 +9,8 @@
     "babel-node": "babel-node",
     "build": "NODE_ENV=production babel src --out-dir dist --source-maps inline",
     "prepublish": "npm run build",
-    "eslint": "eslint src __test__/*.*",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "eslint": "eslint src __tests__/*.*",
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,9 @@
   "homepage": "https://github.com/iskaldvind/project-lvl3-s97#readme",
   "dependencies": {
     "commander": "*",
-    "url": "*"
+    "url": "*",
+    "mz": "*",
+    "axios": "*"
   },
   "devDependencies": {
     "babel-cli": "*",
@@ -36,7 +38,16 @@
     "eslint-config-airbnb-base": "*",
     "eslint-plugin-import": "*",
     "babel-eslint": "*",
-    "commander": "*",
-    "url": "*"
+    "jest-cli": "*",
+    "regenerator-runtime": "*"
+  },
+  "jest": {
+    "transformIgnorePattenrs": [
+      "/node_modules/",
+      "/__tests__/fixtures"
+    ],
+    "collectCoverageFrom": [
+      "./src/**.js"
+    ]
   }
 }
