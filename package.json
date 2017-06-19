@@ -1,6 +1,6 @@
 {
   "name": "page-loader-ultimate",
-  "version": "0.0.3",
+  "version": "0.0.14",
   "description": "project-lvl3-s97",
   "bin": {
     "page-loader": "dist/bin/page-loader.js"
@@ -23,7 +23,8 @@
   },
   "homepage": "https://github.com/iskaldvind/project-lvl3-s97#readme",
   "dependencies": {
-    "commander": "*"
+    "commander": "*",
+    "url": "*"
   },
   "devDependencies": {
     "babel-cli": "*",
@@ -35,6 +36,7 @@
     "eslint-config-airbnb-base": "*",
     "eslint-plugin-import": "*",
     "babel-eslint": "*",
-    "commander": "*"
+    "commander": "*",
+    "url": "*"
   }
 }
