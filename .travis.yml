@@ -10,7 +10,6 @@ script:
   - make lint
   - make test
 
-after_script:
-  - codeclimate-test-reporter < ./coverage/lcov.info
-
-
+after_success:
+  - npm install -g codeclimate-test-reporter
+  - codeclimate-test-reporter < lcov.info
