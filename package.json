@@ -1,6 +1,6 @@
 {
   "name": "page-loader-ultimate",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "project-lvl3-s97",
   "bin": {
     "page-loader": "dist/bin/page-loader.js"
@@ -38,7 +38,7 @@
     "eslint-config-airbnb-base": "*",
     "eslint-plugin-import": "*",
     "babel-eslint": "*",
-    "jest-cli": "*",
+    "jest": "*",
     "regenerator-runtime": "*"
   },
   "jest": {
