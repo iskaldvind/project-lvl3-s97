@@ -6,24 +6,21 @@
 [![Build Status](https://travis-ci.org/iskaldvind/project-lvl2-s96.svg?branch=master)](https://travis-ci.org/iskaldvind/project-lvl2-s96) 
 
 ## Install:  
-npm install -g gendiff-234389
+npm install -g page-loader-ultimate
 
 ## Usage:
 ```
-gendiff [-f (tree|plain|json)] <firstConfig> <secondConfig>
+page-loader [-o <path>] <url>
 ```
-Compares two configuration files and shows a difference  
-Supported file types: **json**, **ini**, **yml**  
-Supported output formats: **tree** (default), **plain**, **json**  
+Downloads page from url address to output directory (default is current directory)
 
 Options:
 
     -h, --help           output usage information
     -V, --version        output the version number
-    -f, --format [type]  output format
+    -o, --output <path>  specify directory to download into
   
 Examples:
   
-    gendiff first-file.json another-file.json
-    gendiff -f plain first-file.ini another-file.ini
-    gendiff ---format json first-file.yml another-file.yml
+    page-loader https://hexlet.io/courses
+    page-loader --output /var/tmp https://google.com
