@@ -8,11 +8,13 @@ const getResources = (html, address) => {
   const downloadLinks = getDownloadLinks(html, address);
   const promises = downloadLinks.map(link => axios.get(link, { responseType: 'arraybuffer' }));
   return Promise.all(promises)
-    .then(resources => resources.map(resource => ({
-      dlPath: transformResuorceName(resource.config.url, address),
-      data: resource.data,
-    })))
-    .catch(error => error);
+    .then((resources) => {
+      const resPromises = resources.map(resource => ({
+        dlPath: transformResuorceName(resource.config.url, address),
+        data: resource.data,
+      }));
+      return Promise.all(resPromises);
+    });
 };
 
 export default (html, address, resourcesPath) => {
