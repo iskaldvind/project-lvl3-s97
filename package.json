@@ -1,6 +1,6 @@
 {
   "name": "page-loader-ultimate",
-  "version": "0.0.41",
+  "version": "0.1.0",
   "description": "project-lvl3-s97",
   "bin": {
     "page-loader": "dist/bin/page-loader.js"
@@ -27,7 +27,8 @@
     "url": "*",
     "mz": "*",
     "axios": "*",
-    "nock": "*"
+    "nock": "*",
+    "cheerio": "*"
   },
   "devDependencies": {
     "babel-cli": "*",
@@ -47,12 +48,19 @@
     "url": "*",
     "mz": "*",
     "axios": "*",
-    "nock": "*"
+    "nock": "*",
+    "cheerio": "*",
+    "unescape": "*"
   },
   "jest": {
     "transformIgnorePatterns": [
       "/node_modules/",
-      "/__tests__/fixtures"
-    ]
+      "/__fixtures__/"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/testPage_files/"
+    ],
+    "testPathIgnorePatterns": ["/__fixtures__/"]
   }
 }
