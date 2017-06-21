@@ -28,7 +28,7 @@ const testLinkData = fs.readFileSync(path.resolve(testPageDir, testLinkName));
 const testDeepName = 'trash.png';
 const testDeepNewName = 'assets-trash.png';
 const testDeepData = fs.readFileSync(path.resolve(testPageDir, testDeepName));
-const testTempDir = fs.mkdtempSync(os.tmpdir());
+const testTempDir = os.tmpdir();
 
 describe('Test downloading page', () => {
   beforeEach(() => {
