@@ -1,6 +1,6 @@
 {
   "name": "page-loader-ultimate",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "project-lvl3-s97",
   "bin": {
     "page-loader": "dist/bin/page-loader.js"
