@@ -18,44 +18,50 @@ const body = `<html lang="en">
 </body>
 </html>`;
 const testPageDir = path.resolve('./__tests__/__fixtures__/');
-const testPageData = fs.readFileSync(path.resolve(testPageDir, 'testPage.html'), 'utf-8');
+const testPagePath = path.resolve(testPageDir, 'testPage.html');
+const getPageData = () => fs.readFileSync(testPagePath, 'utf-8');
 const testImgName = 'pictureoftheday.png';
-const testImgData = fs.readFileSync(path.resolve(testPageDir, testImgName));
+const testImgPath = path.resolve(testPageDir, testImgName);
+const getImgData = () => fs.readFileSync(testImgPath).data;
 const testScriptName = 'windows11.js';
-const testScriptData = fs.readFileSync(path.resolve(testPageDir, testScriptName));
+const testScriptPath = path.resolve(testPageDir, testScriptName);
+const getScriptData = () => fs.readFileSync(testScriptPath).data;
 const testLinkName = 'best_link_ever.ico';
-const testLinkData = fs.readFileSync(path.resolve(testPageDir, testLinkName));
+const testLinkPath = path.resolve(testPageDir, testLinkName);
+const getLinkData = () => fs.readFileSync(testLinkPath).data;
 const testDeepName = 'trash.png';
 const testDeepNewName = 'assets-trash.png';
-const testDeepData = fs.readFileSync(path.resolve(testPageDir, testDeepName));
-const testTempDir = os.tmpdir();
+const testDeepPath = path.resolve(testPageDir, testDeepName);
+const getDeepData = () => fs.readFileSync(testDeepPath).data;
+const getTempDir = () => os.tmpdir();
 
 describe('Test downloading page', () => {
   beforeEach(() => {
     nock('http://localhost')
       .get('/test')
-      .reply(200, testPageData)
+      .reply(200, getPageData())
       .get(`/test/${testImgName}`)
-      .reply(200, testImgData)
+      .reply(200, getImgData())
       .get(`/test/${testScriptName}`)
-      .reply(200, testScriptData)
+      .reply(200, getScriptData())
       .get(`/test/${testLinkName}`)
-      .reply(200, testLinkData)
+      .reply(200, getLinkData())
       .get(`/test/assets/${testDeepName}`)
-      .reply(200, testDeepData);
+      .reply(200, getDeepData());
   });
   it('# Should download page', (done) => {
-    download(address, testTempDir)
-      .then(() => fs.readFileSync(path.resolve(testTempDir, 'localhost-test.html'), 'utf8'))
+    const tempDir = getTempDir();
+    download(address, tempDir)
+      .then(() => fs.readFileSync(path.resolve(tempDir, 'localhost-test.html'), 'utf8'))
       .then(data => expect(decode(data)).toBe(body))
-      .then(() => fs.readFileSync(path.resolve(testTempDir, 'localhost-test_files', testImgName)))
-      .then(data => expect(data.data).toBe(testImgData.data))
-      .then(() => fs.readFileSync(path.resolve(testTempDir, 'localhost-test_files', testScriptName)))
-      .then(data => expect(data.data).toBe(testScriptData.data))
-      .then(() => fs.readFileSync(path.resolve(testTempDir, 'localhost-test_files', testLinkName)))
-      .then(data => expect(data.data).toBe(testLinkData.data))
-      .then(() => fs.readFileSync(path.resolve(testTempDir, 'localhost-test_files', testDeepNewName)))
-      .then(data => expect(data.data).toBe(testDeepData.data))
+      .then(() => fs.readFileSync(path.resolve(tempDir, 'localhost-test_files', testImgName)))
+      .then(data => expect(data.data).toBe(getImgData()))
+      .then(() => fs.readFileSync(path.resolve(tempDir, 'localhost-test_files', testScriptName)))
+      .then(data => expect(data.data).toBe(getScriptData()))
+      .then(() => fs.readFileSync(path.resolve(tempDir, 'localhost-test_files', testLinkName)))
+      .then(data => expect(data.data).toBe(getLinkData()))
+      .then(() => fs.readFileSync(path.resolve(tempDir, 'localhost-test_files', testDeepNewName)))
+      .then(data => expect(data.data).toBe(getDeepData()))
       .then(done)
       .catch(done.fail);
   });

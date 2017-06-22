@@ -3,7 +3,7 @@ import download from '.';
 
 export default () => {
   program
-    .version('0.1.23')
+    .version('0.1.24')
     .arguments('<url>')
     .description('Downloads page into local directory (current by default)')
     .option('-o, --output <path>', 'output directory path', './')
