@@ -49,7 +49,8 @@ const downloadResources = (html, address, resourcesPath) => {
     .then((resources) => {
       const promises = resources.map((resource) => {
         debug(`Saving resource '${resource.name}' to '${resourcesPath}'`);
-        return fs.writeFile(path.resolve(resourcesPath, resource.name), resource.data)});
+        return fs.writeFile(path.resolve(resourcesPath, resource.name), resource.data);
+      });
       return Promise.all(promises);
     })
     .catch(error => error);
