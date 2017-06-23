@@ -46,7 +46,9 @@ describe('Test downloading page', () => {
       .get(`/test/${testLinkName}`)
       .reply(200, testLinkData)
       .get(`/test/assets/${testDeepName}`)
-      .reply(200, testDeepData);
+      .reply(200, testDeepData)
+      .get('/notexist')
+      .reply(404, { statusCode: 404 });
   });
   it('# Should download page', (done) => {
     download(address, testTempDir)
@@ -62,5 +64,37 @@ describe('Test downloading page', () => {
       .then(data => expect(data.data).toBe(testDeepData))
       .then(done)
       .catch(done.fail);
+  });
+  it('# Should return EEXIST if try to save page to directory which already has it', (done) => {
+    download(address, testTempDir)
+      .then(done.fail)
+      .catch((error) => {
+        expect(error.code).toBe('EEXIST');
+        done();
+      });
+  });
+  it('# Should return ENOENT if try to save page to nonexisting directory', (done) => {
+    download(address, '/nopedir')
+      .then(done.fail)
+      .catch((error) => {
+        expect(error.code).toBe('ENOENT');
+        done();
+      });
+  });
+  it('# Should return ENOTFOUND if try to download from invalid address', (done) => {
+    download('http://fgsfds.blabla', testTempDir)
+      .then(done.fail)
+      .catch((error) => {
+        expect(error.code).toBe('ENOTFOUND');
+        done();
+      });
+  });
+  it('# Should return 404 if try to download from nonexisting Page', (done) => {
+    download('http://localhost/notexist', testTempDir)
+      .then(done.fail)
+      .catch((error) => {
+        expect(error.response.status).toBe(404);
+        done();
+      });
   });
 });

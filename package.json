@@ -1,6 +1,6 @@
 {
   "name": "page-loader-ultimate",
-  "version": "0.1.34",
+  "version": "0.1.51",
   "description": "project-lvl3-s97",
   "bin": {
     "page-loader": "dist/bin/page-loader.js"
@@ -29,7 +29,8 @@
     "axios": "*",
     "nock": "*",
     "cheerio": "*",
-    "debug": "*"
+    "debug": "*",
+    "http-status-codes": "*"
   },
   "devDependencies": {
     "babel-cli": "*",
@@ -52,7 +53,8 @@
     "nock": "*",
     "cheerio": "*",
     "unescape": "*",
-    "debug": "*"
+    "debug": "*",
+    "http-status-codes": "*"
   },
   "jest": {
     "transformIgnorePatterns": [

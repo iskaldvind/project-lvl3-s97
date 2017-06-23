@@ -52,8 +52,7 @@ const downloadResources = (html, address, resourcesPath) => {
         return fs.writeFile(path.resolve(resourcesPath, resource.name), resource.data);
       });
       return Promise.all(promises);
-    })
-    .catch(error => error);
+    });
 };
 
 const substituteLinks = (html, dir, urlBasePath) => {
@@ -74,6 +73,9 @@ const substituteLinks = (html, dir, urlBasePath) => {
   return $.html();
 };
 
+const saveResources = (html, address, resourcesPath) => fs.mkdir(resourcesPath)
+    .then(() => downloadResources(html, address, resourcesPath));
+
 export default (address, dir) => {
   debug(`Starting download page from '${address}' to '${dir}'`);
   const urlBasePath = url.parse(address).path;
@@ -81,15 +83,12 @@ export default (address, dir) => {
   const pagePath = path.resolve(dir, `${pageName}.html`);
   const resourcesDir = `./${pageName}_files`;
   const resourcesPath = path.resolve(dir, `${pageName}_files`);
-  return fs.mkdir(resourcesPath)
-    .then(() => debug(`Resources dir created: ${resourcesPath}`))
-    .then(() => axios.get(address))
+  return axios.get(address)
     .then((response) => {
       debug('Loading page');
       const promisePage = fs
         .writeFile(pagePath, substituteLinks(response.data, resourcesDir, urlBasePath));
-      const promiseResources = downloadResources(response.data, address, resourcesPath);
+      const promiseResources = saveResources(response.data, address, resourcesPath);
       return Promise.all([promisePage, promiseResources]);
-    })
-    .catch(error => error);
+    });
 };
