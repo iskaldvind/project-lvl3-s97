@@ -26,7 +26,7 @@ const runListrTask = (link, func, options, taskType) => {
   const tasks = new Listr([
     {
       title: listrTitles(taskType, link),
-      task: (ctx) => func(link, options)
+      task: ctx => func(link, options)
         .then((data) => {
           ctx.result = data;
         }),

@@ -6,7 +6,7 @@ const enableListr = true;
 
 export default () => {
   program
-    .version('0.1.52')
+    .version('0.1.53')
     .arguments('<url>')
     .description('Downloads page into local directory (current by default)')
     .option('-o, --output <path>', 'output directory path', './')
