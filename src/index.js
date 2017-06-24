@@ -53,37 +53,6 @@ const getDownloadLinks = (html, host) => {
   }, []);
 };
 
-const getResources = (html, address, isListring) => {
-  const downloadLinks = getDownloadLinks(html, address);
-  const promises = downloadLinks.map((link) => {
-    const options = { responseType: 'arraybuffer' };
-    if (isListring) {
-      const taskType = 'resource';
-      return runListrTask(link, axios.get, options, taskType);
-    }
-    return axios.get(link, { responseType: 'arraybuffer' });
-  });
-  return Promise.all(promises)
-    .then((resources) => {
-      const resPromises = resources.map(resource => ({
-        name: renameResource(resource.config.url, address),
-        data: resource.data,
-      }));
-      return Promise.all(resPromises);
-    });
-};
-
-const downloadResources = (html, address, resourcesPath, isListring) => {
-  getResources(html, address, isListring)
-    .then((resources) => {
-      const promises = resources.map((resource) => {
-        debug(`Saving resource '${resource.name}' to '${resourcesPath}'`);
-        return fs.writeFile(path.resolve(resourcesPath, resource.name), resource.data);
-      });
-      return Promise.all(promises);
-    });
-};
-
 const substituteLinks = (html, dir, urlBasePath) => {
   const $ = cheerio.load(html);
   debug('Changing html links');
@@ -102,9 +71,29 @@ const substituteLinks = (html, dir, urlBasePath) => {
   return $.html();
 };
 
+const downloadFiles = (html, address, isListring) => {
+  const downloadLinks = getDownloadLinks(html, address);
+  const options = { responseType: 'arraybuffer' };
+  const taskType = 'resource';
+  const downloadPromises = downloadLinks.map((link) => {
+    if (isListring) {
+      return runListrTask(link, axios.get, options, taskType);
+    }
+    return axios.get(link, options);
+  });
+  return Promise.all([...downloadPromises]);
+};
+
 const saveResources = (html, address, resourcesPath, isListring) =>
-  fs.mkdir(resourcesPath)
-    .then(() => downloadResources(html, address, resourcesPath, isListring));
+  downloadFiles(html, address, isListring).then((responses) => {
+    const writePromises = responses.map((response) => {
+      const fileName = renameResource(response.config.url, address);
+      const fileData = response.data;
+      fs.writeFile(path.resolve(resourcesPath, fileName), fileData);
+      return null;
+    });
+    return Promise.all(writePromises);
+  });
 
 export default (address, dir, isListring = false) => {
   debug(`Starting download page from '${address}' to '${dir}'`);
@@ -118,10 +107,14 @@ export default (address, dir, isListring = false) => {
       debug('Loading page');
       const substititedLinks = substituteLinks(response.data, resourcesDir, urlBasePath);
       const taskType = 'page';
-      const promisePage = isListring ?
-        runListrTask(pagePath, fs.writeFile, substititedLinks, taskType) :
-        fs.writeFile(pagePath, substititedLinks);
+      const promiseResDir = fs.mkdir(resourcesPath);
       const promiseResources = saveResources(response.data, address, resourcesPath, isListring);
-      return Promise.all([promisePage, promiseResources]);
+      return Promise.all([promiseResDir, promiseResources])
+        .then(() => {
+          const promisePage = isListring ?
+            runListrTask(pagePath, fs.writeFile, substititedLinks, taskType) :
+            fs.writeFile(pagePath, substititedLinks);
+          return Promise.all([promisePage]);
+        });
     });
 };
