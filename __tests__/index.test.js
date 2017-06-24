@@ -35,6 +35,11 @@ describe('Test downloading page', () => {
   const testDeepPath = path.resolve(testPageDir, testDeepName);
   const testDeepData = fs.readFileSync(testDeepPath).data;
   const testTempDir = os.tmpdir();
+  const testTempSubdir = path.resolve(testTempDir, 'subdir');
+  const isListring = true;
+  beforeAll(() => {
+    fs.mkdir(testTempSubdir);
+  });
   beforeEach(() => {
     nock('http://localhost')
       .get('/test')
@@ -96,5 +101,15 @@ describe('Test downloading page', () => {
         expect(error.response.status).toBe(404);
         done();
       });
+  });
+  it('# Should work neatly with Listr enabled if all is good', (done) => {
+    download(address, testTempSubdir, isListring)
+      .then(done)
+      .catch(done.fail);
+  });
+  it('# Should intercept an error with Listr enabled', (done) => {
+    download('http://localhost/notexist', testTempDir)
+      .then(done.fail)
+      .catch(done);
   });
 });

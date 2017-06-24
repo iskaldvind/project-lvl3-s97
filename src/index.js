@@ -3,6 +3,7 @@ import url from 'url';
 import path from 'path';
 import cheerio from 'cheerio';
 import dbg from 'debug';
+import Listr from 'listr';
 import axios from './lib/axios';
 import { renameResource, renamePage } from './helpers/name-transformers';
 
@@ -13,6 +14,27 @@ const getDownloadingResourcesTags = () => [
   { name: 'script', src: 'src' },
   { name: 'img', src: 'src' },
 ];
+
+const listrTitles = (taskType, link) => {
+  switch (taskType) {
+    case 'page': return `Page was downloaded as '${path.basename(link)}'\n`;
+    default: return link;
+  }
+};
+
+const runListrTask = (link, func, options, taskType) => {
+  const tasks = new Listr([
+    {
+      title: listrTitles(taskType, link),
+      task: (ctx) => func(link, options)
+        .then((data) => {
+          ctx.result = data;
+        }),
+    },
+  ]);
+  return tasks.run()
+    .then(ctx => ctx.result);
+};
 
 const getDownloadLinks = (html, host) => {
   const $ = cheerio.load(html);
@@ -31,9 +53,16 @@ const getDownloadLinks = (html, host) => {
   }, []);
 };
 
-const getResources = (html, address) => {
+const getResources = (html, address, isListring) => {
   const downloadLinks = getDownloadLinks(html, address);
-  const promises = downloadLinks.map(link => axios.get(link, { responseType: 'arraybuffer' }));
+  const promises = downloadLinks.map((link) => {
+    const options = { responseType: 'arraybuffer' };
+    if (isListring) {
+      const taskType = 'resource';
+      return runListrTask(link, axios.get, options, taskType);
+    }
+    return axios.get(link, { responseType: 'arraybuffer' });
+  });
   return Promise.all(promises)
     .then((resources) => {
       const resPromises = resources.map(resource => ({
@@ -44,8 +73,8 @@ const getResources = (html, address) => {
     });
 };
 
-const downloadResources = (html, address, resourcesPath) => {
-  getResources(html, address)
+const downloadResources = (html, address, resourcesPath, isListring) => {
+  getResources(html, address, isListring)
     .then((resources) => {
       const promises = resources.map((resource) => {
         debug(`Saving resource '${resource.name}' to '${resourcesPath}'`);
@@ -73,10 +102,11 @@ const substituteLinks = (html, dir, urlBasePath) => {
   return $.html();
 };
 
-const saveResources = (html, address, resourcesPath) => fs.mkdir(resourcesPath)
-    .then(() => downloadResources(html, address, resourcesPath));
+const saveResources = (html, address, resourcesPath, isListring) =>
+  fs.mkdir(resourcesPath)
+    .then(() => downloadResources(html, address, resourcesPath, isListring));
 
-export default (address, dir) => {
+export default (address, dir, isListring = false) => {
   debug(`Starting download page from '${address}' to '${dir}'`);
   const urlBasePath = url.parse(address).path;
   const pageName = renamePage(address);
@@ -86,9 +116,12 @@ export default (address, dir) => {
   return axios.get(address)
     .then((response) => {
       debug('Loading page');
-      const promisePage = fs
-        .writeFile(pagePath, substituteLinks(response.data, resourcesDir, urlBasePath));
-      const promiseResources = saveResources(response.data, address, resourcesPath);
+      const substititedLinks = substituteLinks(response.data, resourcesDir, urlBasePath);
+      const taskType = 'page';
+      const promisePage = isListring ?
+        runListrTask(pagePath, fs.writeFile, substititedLinks, taskType) :
+        fs.writeFile(pagePath, substititedLinks);
+      const promiseResources = saveResources(response.data, address, resourcesPath, isListring);
       return Promise.all([promisePage, promiseResources]);
     });
 };
