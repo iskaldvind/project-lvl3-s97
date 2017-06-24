@@ -108,8 +108,11 @@ export default (address, dir, isListring = false) => {
       const substititedLinks = substituteLinks(response.data, resourcesDir, urlBasePath);
       const taskType = 'page';
       const promiseResDir = fs.mkdir(resourcesPath);
-      const promiseResources = saveResources(response.data, address, resourcesPath, isListring);
-      return Promise.all([promiseResDir, promiseResources])
+      return Promise.all([promiseResDir])
+        .then(() => {
+          const promiseResources = saveResources(response.data, address, resourcesPath, isListring);
+          return Promise.all([promiseResources]);
+        })
         .then(() => {
           const promisePage = isListring ?
             runListrTask(pagePath, fs.writeFile, substititedLinks, taskType) :
