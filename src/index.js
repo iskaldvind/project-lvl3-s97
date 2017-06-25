@@ -81,7 +81,7 @@ const downloadFiles = (html, address, isListring) => {
     }
     return axios.get(link, options);
   });
-  return Promise.all([...downloadPromises]);
+  return Promise.all(downloadPromises);
 };
 
 const saveResources = (html, address, resourcesPath, isListring) =>
@@ -89,8 +89,7 @@ const saveResources = (html, address, resourcesPath, isListring) =>
     const writePromises = responses.map((response) => {
       const fileName = renameResource(response.config.url, address);
       const fileData = response.data;
-      fs.writeFile(path.resolve(resourcesPath, fileName), fileData);
-      return null;
+      return fs.writeFile(path.resolve(resourcesPath, fileName), fileData);
     });
     return Promise.all(writePromises);
   });

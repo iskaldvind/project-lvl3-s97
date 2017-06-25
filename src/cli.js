@@ -6,7 +6,7 @@ const isListring = true;
 
 export default () => {
   program
-    .version('0.3.1')
+    .version('0.3.2')
     .arguments('<url>')
     .description('Downloads page into local directory (current by default)')
     .option('-o, --output <path>', 'output directory path', './')
